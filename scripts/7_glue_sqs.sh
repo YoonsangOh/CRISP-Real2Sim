@@ -33,6 +33,7 @@ SPLIT_INPUT="${1%/}"
 HMR_TYPE="${2:-gv}"
 LOG_DIR="${LOG_DIR:-/tmp/vis_megasam_logs}"
 mkdir -p "$LOG_DIR"
+LOG_DIR="$(cd "$LOG_DIR" && pwd)"
 
 RUN_NKSR_RAW="${RUN_NKSR:-off}"
 case "${RUN_NKSR_RAW,,}" in

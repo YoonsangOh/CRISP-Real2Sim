@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DATA_ROOT="/home/ubuntu/FAR/CRISP-Real2Sim/data"
-SCRIPT_REL="all_gv.sh"   # assumes you run this from the folder that contains all_gv.sh
-# If you want an absolute script path instead, set:
-# SCRIPT="/home/ubuntu/FAR/CRISP-Real2Sim/scripts/all_gv.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+DATA_ROOT="${DATA_ROOT:-$REPO_ROOT/data}"
+SCRIPT_REL="$SCRIPT_DIR/all_gv.sh"
 
 shopt -s nullglob
 

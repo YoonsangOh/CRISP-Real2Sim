@@ -1,17 +1,28 @@
-cd ../prep/MogeSAM
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+ROOT="$(realpath "${1%/}")"
+cd "$REPO_ROOT/prep/MogeSAM"
 
 ###############################################################################
 # 2) Paths
 ###############################################################################
-ROOT="$1"
 DATA_PATH="${ROOT%/}_img"              # append “_img” if not already
 [[ -d "$DATA_PATH" ]] || { echo "❌  '$DATA_PATH' not found"; exit 1; }
 
 ###############################################################################
 # 3) GPUs
 ###############################################################################
-GPU_COUNT=$(nvidia-smi -L | wc -l)
-GPU_IDS=($(seq 0 $((GPU_COUNT-1))))
+if [[ -n "${CRISP_GPU_IDS:-}" ]]; then
+    IFS=',' read -r -a GPU_IDS <<< "$CRISP_GPU_IDS"
+    GPU_COUNT=${#GPU_IDS[@]}
+else
+    GPU_COUNT=$(nvidia-smi -L | wc -l)
+    GPU_IDS=($(seq 0 $((GPU_COUNT-1))))
+fi
 
 echo "🖥️  Found $GPU_COUNT GPUs → ${GPU_IDS[*]}"
 echo "📂  Scanning '$DATA_PATH' …"
@@ -49,15 +60,20 @@ worker() {
 ###############################################################################
 # 6) Dispatch jobs: split DIRS array round‑robin by modulo GPU_COUNT
 ###############################################################################
-for gpu_id in "${GPU_IDS[@]}"; do
+pids=()
+for gpu_slot in "${!GPU_IDS[@]}"; do
+    gpu_id="${GPU_IDS[$gpu_slot]}"
     # build slice for this GPU
     gpu_dirs=()
-    for (( idx=gpu_id; idx<NUM_DIRS; idx+=GPU_COUNT )); do
+    for (( idx=gpu_slot; idx<NUM_DIRS; idx+=GPU_COUNT )); do
         gpu_dirs+=("${DIRS[idx]}")
     done
     # start worker in background
     worker "$gpu_id" "${gpu_dirs[@]}" &
+    pids+=("$!")
 done
 
-wait
+for pid in "${pids[@]}"; do
+    wait "$pid"
+done
 echo "🏁  All jobs finished."

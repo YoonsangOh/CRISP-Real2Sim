@@ -59,6 +59,12 @@ if [[ ! -f "$BRIDGE_SCRIPT" ]]; then
   exit 1
 fi
 
+RL_PREFIX="$(conda env list | awk -v env="$RL_ENV" '$1 == env {print $NF; exit}')"
+if [[ -z "$RL_PREFIX" || ! -d "$RL_PREFIX/lib" ]]; then
+  echo "Could not resolve conda environment prefix for RL_ENV='$RL_ENV'." >&2
+  exit 1
+fi
+
 pushd "$VISER_DIR" >/dev/null
 
 shopt -s nullglob
@@ -85,7 +91,8 @@ for seq_dir in "${seq_dirs[@]}"; do
     python "$ROTATE_SQS_ONLY" --sequence-name "$seq_name" --hmr-type "$HMR_TYPE"
 
     echo "===== $(date +'%F %T') bridge_crisp_to_motiontracking.py ====="
-    conda run -n "$RL_ENV" python "$BRIDGE_SCRIPT" "$seq_name" --date "$RL_DATE" --hmr-type "$HMR_TYPE" --force
+    LD_LIBRARY_PATH="$RL_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+      conda run -n "$RL_ENV" python "$BRIDGE_SCRIPT" "$seq_name" --date "$RL_DATE" --hmr-type "$HMR_TYPE" --force
   } >"$logfile" 2>&1
 done
 

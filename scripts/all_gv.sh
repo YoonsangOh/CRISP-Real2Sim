@@ -1,6 +1,6 @@
 
 #!/usr/bin/env bash
-#set -euo pipefail
+set -euo pipefail
 
 ################################################################################
 # 1) Make sure conda’s shell functions are available in this script:

@@ -15,7 +15,13 @@ DATA_PATH="${1}_img"
 
 
 # Count how many GPUs you have
-GPU_COUNT=$(nvidia-smi -L | wc -l)
+if [[ -n "${CRISP_GPU_IDS:-}" ]]; then
+    IFS=',' read -r -a GPU_IDS <<< "$CRISP_GPU_IDS"
+    GPU_COUNT=${#GPU_IDS[@]}
+else
+    GPU_COUNT=$(nvidia-smi -L | wc -l)
+    GPU_IDS=($(seq 0 $((GPU_COUNT-1))))
+fi
 
 # Gather all subdirectories (one level deep) under DATA_PATH
 folders=($(find "$DATA_PATH" -maxdepth 1 -mindepth 1 -type d))
@@ -29,7 +35,7 @@ for i in "${!folders[@]}"; do
     seq=$(basename "$folder")
     
     # Round-robin assignment of GPU by index modulo GPU_COUNT
-    GPU_ID=$(( i % GPU_COUNT ))
+    GPU_ID="${GPU_IDS[$(( i % GPU_COUNT ))]}"
     
     echo "Launching job for '$folder' on GPU $GPU_ID ..."
 

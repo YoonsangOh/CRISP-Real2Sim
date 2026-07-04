@@ -20,11 +20,14 @@ Code pipeline, in one line: scripts `1-8` are `1)` video-to-images convention, `
 ### 1. Repository Setup
 
 ```bash
-git clone --recursive https://github.com/Z1hanW/CRISP-Real2Sim.git
+git clone --recursive https://github.com/YoonsangOh/CRISP-Real2Sim.git
 cd CRISP-Real2Sim
 bash setups/setup_crisp.sh
 conda activate crisp
 ```
+
+For local storage, checkpoint, and non-committed artifact conventions, see
+[`docs/local_setup_and_storage_ko.md`](docs/local_setup_and_storage_ko.md).
 
 
 Optional demo shortcut: [`run_demo.sh`](setups/run_demo.sh), one trick I found is to launch codex --yolo / claude code inside of this repo and ask it to set up environment, it can help with lots of conflicts among different machines. 

@@ -3103,6 +3103,16 @@ def interval_flow_segmentation_pipeline_with_vis(
     flow_forward, flow_backward, covis_masks = load_flow_and_covis_data_fixed(
         data_dir, frame_indices, H, W, interval
     )
+    if not flow_forward:
+        raise FileNotFoundError(
+            f"No UFM flow files were loaded from {data_dir}. "
+            "Run scripts/0_ufm.sh for this sequence before SQS scene extraction."
+        )
+    if not covis_masks:
+        raise FileNotFoundError(
+            f"No UFM covisibility files were loaded from {data_dir}. "
+            "Run scripts/0_ufm.sh for this sequence before SQS scene extraction."
+        )
     
     # Optional: visualize flow
     if save_debug:

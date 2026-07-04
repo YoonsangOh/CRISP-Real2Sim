@@ -11,8 +11,13 @@ DATA_PATH="${ROOT%/}_videos"  # Append "_video" suffix
 DIRS=("$DATA_PATH"/*)
 NUM_DIRS=${#DIRS[@]}
 
-GPU_COUNT=$(nvidia-smi -L | wc -l)
-GPU_IDS=($(seq 0 $((GPU_COUNT-1))))
+if [[ -n "${CRISP_GPU_IDS:-}" ]]; then
+    IFS=',' read -r -a GPU_IDS <<< "$CRISP_GPU_IDS"
+    GPU_COUNT=${#GPU_IDS[@]}
+else
+    GPU_COUNT=$(nvidia-smi -L | wc -l)
+    GPU_IDS=($(seq 0 $((GPU_COUNT-1))))
+fi
 
 worker() {
     local gpu_id="$1"
@@ -29,9 +34,10 @@ worker() {
     done
 }
 
-for gpu_id in "${GPU_IDS[@]}"; do
+for gpu_idx in "${!GPU_IDS[@]}"; do
+    gpu_id="${GPU_IDS[$gpu_idx]}"
     gpu_dirs=()
-    for (( idx=gpu_id; idx<NUM_DIRS; idx+=GPU_COUNT )); do
+    for (( idx=gpu_idx; idx<NUM_DIRS; idx+=GPU_COUNT )); do
         gpu_dirs+=("${DIRS[idx]}")
     done
     worker "$gpu_id" "${gpu_dirs[@]}" &

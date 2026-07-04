@@ -15,6 +15,9 @@
 	path = prep/Contact-Predictor
 	url = https://github.com/CRISP-Real2Sim/Contact-Predictor.git
 	branch = main
+[submodule "prep/GeoCalib"]
+	path = prep/GeoCalib
+	url = https://github.com/hongsukchoi/GeoCalib.git
 [submodule "prep/NKSR"]
 	path = prep/NKSR
 	url = https://github.com/nv-tlabs/NKSR.git

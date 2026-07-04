@@ -1,14 +1,23 @@
-# ===== Python 常见编译产物 =====
+# Python caches and build artifacts.
 __pycache__/
 *.py[cod]
 *.so
-
-# ===== 构建产物（主仓库自己的，不影响 prep/AutoMask/ 那个子模块）=====
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 build/
 dist/
 *.egg-info/
 
-# ===== 日志 & 临时文件 =====
+# Local environments.
+.venv/
+venv/
+env/
+.conda/
+.nodeenv/
+node_modules/
+
+# Logs and temporary files.
 logs/
 log/
 *.log
@@ -17,76 +26,40 @@ temp/
 .cache/
 cache/
 viser_output*
+rendered_output/
+holosoma/
 
-# ===== 结果、实验输出（主仓库级别）=====
+# Generated pipeline outputs.
 results/
 result/
 outputs/
 output/
 runs/
-checkpoints/
-weights/
-models/
-*.npy
-*.npz
-*.pth
-*.ckpt
+batch_work/
 
-# ===== 数据（大文件，主仓库级别）=====
+# Large local assets, datasets, and checkpoints.
 data/
+datasets/
 motion_data/
-datasets/
-*.h5
-*.hdf5
-*.pkl
-
-# ===== 编辑器、OS 文件 =====
-*.swp
-*.swo
-.DS_Store
-.idea/
-.vscode/
-
-# ===== Python 常见编译产物 =====
-__pycache__/
-*.py[cod]
-*.so
-
-# ===== 构建产物（主仓库自己的，不影响 prep/AutoMask/ 那个子模块）=====
-build/
-dist/
-*.egg-info/
-
-# ===== 日志 & 临时文件 =====
-logs/
-log/
-*.log
-tmp/
-temp/
-.cache/
-
-# ===== 结果、实验输出（主仓库级别）=====
-results/
-result/
-outputs/
-output/
-runs/
+videomimic_data/
+videomimic_videos/
+videomimic_single_img/
+videomimic_single_videos/
+videomimic_*/
+third_party/
 checkpoints/
 weights/
 models/
 *.npy
 *.npz
 *.pth
+*.pt
 *.ckpt
-
-# ===== 数据（大文件，主仓库级别）=====
-data/
-datasets/
+*.pkl
 *.h5
 *.hdf5
-*.pkl
 
-# ===== 必须跟随 MotionTracking 源码提交的内部模块 =====
+# Keep MotionTracking source modules that intentionally live under model/data names.
 !MotionTracking/motion_tracking/agents/models/
 !MotionTracking/motion_tracking/agents/models/*.py
 !MotionTracking/motion_tracking/data/
@@ -95,22 +68,9 @@ MotionTracking/motion_tracking/data/assets/**
 !MotionTracking/motion_tracking/data/assets/__init__.py
 !MotionTracking/motion_tracking/data/assets/skeleton_configs.py
 
-# ===== 编辑器、OS 文件 =====
+# Editor and OS files.
 *.swp
 *.swo
 .DS_Store
 .idea/
 .vscode/
-
-# local node env
-.nodeenv/
-
-# local node env
-.nodeenv/
-
-# local node env
-.nodeenv/
-
-rendered_output
-
-holosoma
